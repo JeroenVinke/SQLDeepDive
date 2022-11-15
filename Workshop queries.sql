@@ -33,13 +33,13 @@ FROM [dbo].[User_Original]
 WHERE FirstName = 'Zoya'
 
 -- QUERY 6
-SELECT [Id], [FirstName] 
+SELECT [Id], [FirstName], [LastName] 
 FROM [dbo].[User] 
-WHERE FirstName = 'Zoya'
+WHERE FirstName <> 'Zoya'
 
-SELECT [Id], [FirstName] 
+SELECT [Id], [FirstName], [LastName] 
 FROM [dbo].[User_Original] 
-WHERE FirstName = 'Zoya'
+WHERE FirstName <> 'Zoya'
 
 -- QUERY 7
 SELECT [Id], [FirstName], [LastName] 
