@@ -32,15 +32,6 @@ SELECT Id, FirstName
 FROM [dbo].[User_Original] 
 WHERE FirstName = 'Zoya'
 
--- QUERY 6
-SELECT [Id], [FirstName], [LastName] 
-FROM [dbo].[User] 
-WHERE FirstName <> 'Zoya'
-
-SELECT [Id], [FirstName], [LastName] 
-FROM [dbo].[User_Original] 
-WHERE FirstName <> 'Zoya'
-
 -- QUERY 7
 SELECT [Id], [FirstName], [LastName] 
 FROM [dbo].[User] 
@@ -49,6 +40,22 @@ WHERE FirstName = 'Zoya'
 SELECT [Id], [FirstName], [LastName] 
 FROM [dbo].[User_Original] 
 WHERE FirstName = 'Zoya'
+
+-- QUERY 7
+-- Laat SQL Server zelf bepalen hoe de data opgehaald moet worden
+SELECT [Id], [FirstName], [LastName] 
+FROM [dbo].[User] 
+WHERE FirstName <> 'Zoya'
+
+-- Forceer de nieuwe index te gebruiken
+SELECT [Id], [FirstName], [LastName] 
+FROM [dbo].[User] WITH(INDEX([Naam]))
+WHERE FirstName <> 'Zoya'
+
+SELECT [Id], [FirstName], [LastName] 
+FROM [dbo].[User_Original] 
+WHERE FirstName <> 'Zoya'
+
 
 -- INDEX AANPASSEN
 DROP INDEX Naam ON [dbo].[User]
