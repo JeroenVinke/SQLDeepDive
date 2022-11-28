@@ -26,7 +26,7 @@ ORDER BY [FirstName] ASC
 SELECT [FirstName], [LastName]
 FROM [dbo].[User]
 INNER JOIN [dbo].[UserAddress] ON  [dbo].[UserAddress].[UserId] = [dbo].[User].[Id]
-WHERE [dbo].[UserAddress].[StreetName] = 'Main Street 15'
+WHERE [dbo].[UserAddress].[StreetName] = 'mulberry 134'
 OPTION (LOOP JOIN)
 
 -- INDEX AANMAKEN
