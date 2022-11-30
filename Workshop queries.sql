@@ -7,7 +7,7 @@ WHERE [FirstName] = 'Zoya'
 
 -- QUERY 2
 -- Vraag: Hoeveel records heeft SQL Server doorzocht om tot het resultaat (1 rows) te komen?
--- Vraag: Hoeveel pages (8kb blokken) is van het databestand uitlezen?
+-- Vraag: Is de Clustered Index SEEK van Query 2 beter dan de Clustered Index SCAN van Query 1?
 SELECT [Id], [FirstName]
 FROM [dbo].[User] 
 WHERE [Id] = 990025
@@ -22,18 +22,21 @@ ORDER BY [FirstName] ASC
 -- QUERY 4
 -- Vraag: Wat doet SQL Server allemaal om tot het resultaat te komen?
 -- Vraag: Wat is de duurste operator in dit queryplan?
--- Vraag: Hoe zou je dit kunnen versnellen?
+-- Vraag: Waarom is deze operator zo duur?
+-- Vraag: Welke index zou je kunnen maken om deze query te versnellen?
 SELECT [FirstName], [LastName]
 FROM [dbo].[User]
 INNER JOIN [dbo].[UserAddress] ON  [dbo].[UserAddress].[UserId] = [dbo].[User].[Id]
 WHERE [dbo].[UserAddress].[StreetName] = 'mulberry 134'
 OPTION (LOOP JOIN)
 
--- INDEX AANMAKEN
+-- TUSSENSTAP: INDEX AANMAKEN
 CREATE INDEX [IX_Naam] ON [dbo].[User] ([FirstName])
 
 -- QUERY 5
--- Vraag: is de query met de nieuwe index sneller geworden dan zonder de index?
+-- De tabel [dbo].[User] heeft nu een index op FirstName
+-- De tabel [dbo].[User_Original] heeft deze index niet
+-- Vraag: Vergelijk het queryplan van de onderste twee queries. Heeft de nieuwe index geholpen?
 SELECT [Id], [FirstName]
 FROM [dbo].[User] 
 WHERE [FirstName] = 'Zoya'
@@ -43,24 +46,21 @@ FROM [dbo].[User_Original]
 WHERE [FirstName] = 'Zoya'
 
 -- QUERY 6
--- Vraag: Wat doet SQL Server allemaal om tot het resultaat van de eerste query te komen?
--- Vraag: Heeft de nieuwe index deze query veel sneller gemaakt?
+-- Vraag: Hoeveel logical reads doet de eerste query?
+-- Vraag: Waarom doet SQL Server een Key lookup?
+-- Tip: Kijk bij de Output List van de properties van de Key Lookup. Welke kolom geeft de key lookup terug?
 -- Vraag: Hoe zou je de index kunnen aapassen zodat de eerste query geen key lookup meer hoeft te doen?
 SELECT [Id], [FirstName], [LastName] 
 FROM [dbo].[User] 
 WHERE [FirstName] = 'Zoya'
 
-SELECT [Id], [FirstName], [LastName] 
-FROM [dbo].[User_Original] 
-WHERE [FirstName] = 'Zoya'
 
 -- QUERY 7
--- Hierbij moet je het queryplan van twee queries met elkaar vergelijken
+-- LET OP: onderstaande queries kunnen 10 sec duren
 -- De eerste query laat SQL Server zelf besluiten hoe hij de data op moet halen
--- De tweede query forceert SQL Server de nieuwe index op FirstName te gebruiken
+-- De tweede query forceert SQL Server om de nieuwe index op FirstName te gebruiken
 -- Vraag: Waarom gebruikt SQL Server bij de eerste query niet de index op FirstName?
--- Tip: Kijk hoeveel logical reads elke operator heeft gedaan
--- Welk queryplan doet de minste logical reads?
+-- Tip: Kijk hoeveel logical reads elke operator heeft gedaan in beide queryplannen
 SELECT [Id], [FirstName], [LastName] 
 FROM [dbo].[User] 
 WHERE [FirstName] <> 'Zoya'
@@ -70,7 +70,7 @@ FROM [dbo].[User] WITH(INDEX([IX_Naam]))
 WHERE [FirstName] <> 'Zoya'
 
 
--- INDEX AANPASSEN
+-- TUSSENSTAP: INDEX AANPASSEN
 DROP INDEX [IX_Naam] ON [dbo].[User]
 CREATE INDEX [IX_Naam] ON [dbo].[User] ([FirstName], [LastName])
 
